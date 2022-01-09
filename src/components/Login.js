@@ -1,83 +1,31 @@
-import { useState } from 'react'
-import axios from 'axios'
-
-import './Login.css'
-import logo from '../images/logo.png'
+import { useEffect, useState } from 'react'
+import LoginForm from './LoginForm'
 
 function Login () {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [user, setUser] = useState(null)
 
-  const emailHandler = event => {
-    setEmail(event.target.value)
-  }
+  //Este efecto es para leer el local Storage y saber si el usuario esta con la sesión iniciada
 
-  const passwordHandler = event => {
-    setPassword(event.target.value)
-  }
+  // useEffect(() => {
+  //   const loggedUserJSON = window.localStorage.getItem('loggedUser')
+  //   if (loggedUserJSON) {
+  //     const user = JSON.parse(loggedUserJSON)
+  //     setUser(user)
+  // Y si queremos que la lista tengan el token tendríamos que hacer setToken y pasarle el token. Con esto logrmos no tener que iniciar sesión cada vex que refrescamos la página
+  //   }
+  // }, [])
 
-  const submitHandler = async event => {
-    event.preventDefault()
-
-    const data = await fetch(
-      'https://api-development.rodeoworld.co.uk/venues/list',
-      {
-        method: 'POST',
-        body: JSON.stringify({
-          email,
-          password
-        }),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }
-    )
-    const response = data.json()
-    localStorage.setItem('user-info', JSON.stringify(response))
-    // history.push()
-    console.log(response)
-
-    // axios
-    //   .post('https://api-development.rodeoworld.co.uk/businesses/login', {
-    //     email,
-    //     password
-    //   })
-    //   .then(response => {
-    //     console.log(response.status)
-    //   })
-    //   .catch(error => console.log(error))
-
-    setEmail('')
-    setPassword('')
+  const saveUser = user => {
+    setUser(user)
   }
 
   return (
-    <div className='wrapper fadeInDown'>
-      <div id='formContent'>
-        <div className='fadeIn first'>
-          <img src={logo} width='100px' alt='User Icon' />
-        </div>
+    <div>
+      <LoginForm onSaveUser={saveUser} />
+      {/* {user === null && <LoginForm onSaveUser={saveUser} />} */}
 
-        <form onSubmit={submitHandler}>
-          <input
-            type='text'
-            className='fadeIn second'
-            name='email'
-            value={email}
-            placeholder='Email'
-            onChange={emailHandler}
-          />
-          <input
-            type='password'
-            className='fadeIn third'
-            name='password'
-            value={password}
-            placeholder='Password'
-            onChange={passwordHandler}
-          />
-          <input type='submit' className='fadeIn fourth' value='Log In' />
-        </form>
-      </div>
+      {/* Acá iría la lista de las venues */}
+      {/* {user !== null && <ul></ul>} */}
     </div>
   )
 }
