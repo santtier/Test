@@ -1,23 +1,14 @@
 import { useState } from 'react'
-import axios from 'axios'
 
-import logo from '../images/logo.png'
+import { setToken } from '../../services/offersVenues'
+import loginService from '../../services/user'
+import logo from '../../images/logo.png'
 import './Login.css'
 
 const LoginForm = props => {
-  const baseUrl = 'https://api-development.rodeoworld.co.uk'
-
-  // const [errorMessage, setErrorMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-
-  const login = async credentials => {
-    const { data } = await axios.post(
-      baseUrl + '/businesses/login',
-      credentials
-    )
-    return data
-  }
 
   const emailHandler = event => {
     setEmail(event.target.value)
@@ -31,21 +22,23 @@ const LoginForm = props => {
     event.preventDefault()
 
     try {
-      const user = login({
+      const user = await loginService({
         email,
         password
       })
-
-      console.log(user)
       props.onSaveUser(user)
 
-      // Acá guardariamos el token que nos envia la dat del API para no tener que iniciar sesion cada vez que refrescamos el navegador
       window.localStorage.setItem('loggedUser', JSON.stringify(user))
+
+      setToken(user.token)
 
       setEmail('')
       setPassword('')
     } catch (e) {
-      // setErrorMessage()
+      setErrorMessage(true)
+      setTimeout(() => {
+        setErrorMessage(false)
+      }, 5000)
     }
   }
 
@@ -55,7 +48,6 @@ const LoginForm = props => {
         <div className='fadeIn first'>
           <img src={logo} width='100px' alt='User Icon' />
         </div>
-
         <form onSubmit={loginHandler}>
           <input
             type='text'
@@ -75,22 +67,15 @@ const LoginForm = props => {
           />
           <input type='submit' className='fadeIn fourth' value='Log In' />
         </form>
+
+        {errorMessage && (
+          <div className='alert alert-danger' role='alert'>
+            Incorrect email or password
+          </div>
+        )}
       </div>
     </div>
   )
 }
 
 export default LoginForm
-
-// const data = await fetch(baseUrl + '/businesses/login', {
-//   method: 'POST',
-//   body: JSON.stringify({
-//     email,
-//     password
-//   }),
-//   headers: {
-//     'Content-Type': 'application/json'
-//   }
-// })
-// const response = await data.json()
-// console.log(response)

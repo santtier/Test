@@ -4,7 +4,8 @@ html {
 
 body {
   font-family: 'Poppins', sans-serif;
-  height: 100vh;
+  min-height: 100vh;
+  overflow: hidden;
 }
 
 a {
@@ -143,6 +144,11 @@ input[type='password']:focus {
 input[type='text']:placeholder,
 input[type='password']:placeholder {
   color: #cccccc;
+}
+
+.alert {
+  padding: 1rem;
+  background-color: #f8d7da;
 }
 
 /* ANIMATIONS */
